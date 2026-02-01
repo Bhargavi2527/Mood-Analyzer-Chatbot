@@ -35,17 +35,10 @@ load_custom_css()
 @st.cache_resource
 def initialize_gemini():
     """Initialize Gemini API with error handling"""
-    # Try Streamlit secrets first (for Streamlit Cloud), then environment variable
-    try:
-        api_key = st.secrets.get("GEMINI_API_KEY")
-    except:
-        api_key = os.getenv("GEMINI_API_KEY")
-    
+    api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
-        st.error("⚠️ GEMINI_API_KEY not found. Please configure it in Streamlit secrets or .env file")
-        st.info("Get your API key from: https://makersuite.google.com/app/apikey")
+        st.error("⚠️ GEMINI_API_KEY not found in environment variables")
         st.stop()
-    
     genai.configure(api_key=api_key)
     return genai.GenerativeModel("gemini-pro")
 
