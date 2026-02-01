@@ -22,7 +22,7 @@ from utils.helpers import (
 
 # Page Configuration
 st.set_page_config(
-    page_title="AI Emotion Detection",
+    page_title="Mood Analyzer | AI Emotion Detection",
     page_icon="🧠",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -35,10 +35,17 @@ load_custom_css()
 @st.cache_resource
 def initialize_gemini():
     """Initialize Gemini API with error handling"""
-    api_key = os.getenv("GEMINI_API_KEY")
+    # Try Streamlit secrets first (for Streamlit Cloud), then environment variable
+    try:
+        api_key = st.secrets.get("GEMINI_API_KEY")
+    except:
+        api_key = os.getenv("GEMINI_API_KEY")
+    
     if not api_key:
-        st.error("⚠️ GEMINI_API_KEY not found in environment variables")
+        st.error("⚠️ GEMINI_API_KEY not found. Please configure it in Streamlit secrets or .env file")
+        st.info("Get your API key from: https://makersuite.google.com/app/apikey")
         st.stop()
+    
     genai.configure(api_key=api_key)
     return genai.GenerativeModel("gemini-pro")
 
@@ -317,6 +324,6 @@ if st.session_state.history:
 # Footer
 st.markdown("""
     <div class="footer">
-        <p>Bhargavi❤️ © 2026 Mood Analyzer</p>
+        <p>Built with ❤️ using Streamlit & Google Gemini AI | © 2026 Mood Analyzer</p>
     </div>
 """, unsafe_allow_html=True)
